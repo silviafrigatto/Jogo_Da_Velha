@@ -40,26 +40,25 @@ namespace Jogo_Da_Velha
             button.Enabled = false; // desabilita o botão
             button.BackColor = System.Drawing.Color.Cyan; // muda a cor do player
             buttons.Remove(button); // remove o o botão da lista para que o computador não possa "clicar"
-            if(buttons.Count <= 4)
+            if (buttons.Count <= 4)
                 Check(); // verifica se o player venceu
             AImoves.Start(); // inicia o timer da IA
         }
 
-
-        //  INICIAR THREAD DA IA
+        // THREAD IA
         private void AImove(object sender, EventArgs e)
         {
             Thread th = new Thread(Thread_IA);
             th.Start();
         }
 
-        private delegate void myDelegate();
+        private delegate void DelegateIA();
 
         private void Thread_IA()
         {
             if(this.InvokeRequired)
             {
-                myDelegate md = new myDelegate(Thread_IA);
+                DelegateIA md = new DelegateIA(Thread_IA);
                 this.Invoke(md, null);
             }
             else
@@ -87,18 +86,36 @@ namespace Jogo_Da_Velha
                 }
             }
         }
-        //  FIM THREAD DA IA
+        //  FIM THREAD IA
 
         private void restartGame(object sender, EventArgs e)
         {
             resetGame();
         }
 
+        // THREAD BOTÕES
         private void loadbuttons()
         {
-            // coloca todos os botões na lista
-            buttons = new List<Button> { button1, button2, button3, button4, button5, button6, button7, button9, button8 };
+            Thread th = new Thread(Thread_Loadbuttons);
+            th.Start();
         }
+
+        private delegate void DelegateButtons();
+
+        private void Thread_Loadbuttons()
+        {
+            if (this.InvokeRequired)
+            {
+                DelegateButtons md = new DelegateButtons(Thread_Loadbuttons);
+                this.Invoke(md, null);
+            }
+            else
+            {
+                // coloca todos os botões na lista
+                buttons = new List<Button> { button1, button2, button3, button4, button5, button6, button7, button9, button8 };
+            }
+        }
+        // FIM THREAD BOTÕES
 
         private void resetGame() // reinicia os objetos do jogo
         {
@@ -115,7 +132,7 @@ namespace Jogo_Da_Velha
             loadbuttons(); // reinsere os botões no jogo
         }
 
-        //THREAD RESULTADOS
+        //  THREAD RESULTADOS
         
         private void Check() //  verifica quem venceu ou se houve empate
         {
@@ -123,13 +140,13 @@ namespace Jogo_Da_Velha
             th.Start();
         }
 
-        private delegate void Delegate();
+        private delegate void DelegateResults();
 
         private void Thread_Results()
         {
             if (this.InvokeRequired)
             {
-                Delegate md = new Delegate(Thread_Results);
+                DelegateResults md = new DelegateResults(Thread_Results);
                 this.Invoke(md, null);
             }
 
@@ -177,7 +194,7 @@ namespace Jogo_Da_Velha
                     resetGame();
                 }
             }
-            //FIM THREAD RESULTADOS
+            //  FIM THREAD RESULTADOS
         }
     }
 }
