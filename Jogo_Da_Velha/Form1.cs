@@ -70,6 +70,11 @@ namespace Jogo_Da_Velha
                 if (buttons.Count > 0)
                 {
                     int index = rand.Next(buttons.Count); // gera um número aleatório dentro do número de botões disponíveis
+                    //if (button1.Text == "X" && button2.Text == "X")
+                    //{
+                        
+                    //}
+                    
                     buttons[index].Enabled = false; // atribui o número ao botão                   
 
                     currentPlayer = Player.O; // define o símbolo da AI
@@ -110,49 +115,69 @@ namespace Jogo_Da_Velha
             loadbuttons(); // reinsere os botões no jogo
         }
 
+        //THREAD RESULTADOS
+        
         private void Check() //  verifica quem venceu ou se houve empate
         {
-            // verifica as possibilidades de vitória do player
-            if (button1.Text == "X" && button2.Text == "X" && button3.Text == "X"
-               || button4.Text == "X" && button5.Text == "X" && button6.Text == "X"
-               || button7.Text == "X" && button9.Text == "X" && button8.Text == "X"
-               || button1.Text == "X" && button4.Text == "X" && button7.Text == "X"
-               || button2.Text == "X" && button5.Text == "X" && button8.Text == "X"
-               || button3.Text == "X" && button6.Text == "X" && button9.Text == "X"
-               || button1.Text == "X" && button5.Text == "X" && button9.Text == "X"
-               || button3.Text == "X" && button5.Text == "X" && button7.Text == "X")
-            {
-               
-                AImoves.Stop(); 
-                MessageBox.Show("Você venceu!"); 
-                playerWins++; 
-                label1.Text = "Jogador (X): " + playerWins; 
-                resetGame(); 
-            }
-            // verifica as possibilidades de vitória da IA
-            else if (button1.Text == "O" && button2.Text == "O" && button3.Text == "O"
-            || button4.Text == "O" && button5.Text == "O" && button6.Text == "O"
-            || button7.Text == "O" && button9.Text == "O" && button8.Text == "O"
-            || button1.Text == "O" && button4.Text == "O" && button7.Text == "O"
-            || button2.Text == "O" && button5.Text == "O" && button8.Text == "O"
-            || button3.Text == "O" && button6.Text == "O" && button9.Text == "O"
-            || button1.Text == "O" && button5.Text == "O" && button9.Text == "O"
-            || button3.Text == "O" && button5.Text == "O" && button7.Text == "O")
-            {
+            Thread th = new Thread(Thread_Results);
+            th.Start();
+        }
 
-                AImoves.Stop(); 
-                MessageBox.Show("Não foi dessa vez... O Computador ganhou."); 
-                computerWins++; 
-                label2.Text = "Computador (O): " + computerWins; 
-                resetGame(); 
-            }
-            // verifica empate
-            else if (buttons.Count == 0)
+        private delegate void Delegate();
+
+        private void Thread_Results()
+        {
+            if (this.InvokeRequired)
             {
-                AImoves.Stop();
-                MessageBox.Show("Empatou.");
-                resetGame();
+                Delegate md = new Delegate(Thread_Results);
+                this.Invoke(md, null);
             }
+
+            else
+            {
+                // verifica as possibilidades de vitória do player
+                if (button1.Text == "X" && button2.Text == "X" && button3.Text == "X"
+                   || button4.Text == "X" && button5.Text == "X" && button6.Text == "X"
+                   || button7.Text == "X" && button9.Text == "X" && button8.Text == "X"
+                   || button1.Text == "X" && button4.Text == "X" && button7.Text == "X"
+                   || button2.Text == "X" && button5.Text == "X" && button8.Text == "X"
+                   || button3.Text == "X" && button6.Text == "X" && button9.Text == "X"
+                   || button1.Text == "X" && button5.Text == "X" && button9.Text == "X"
+                   || button3.Text == "X" && button5.Text == "X" && button7.Text == "X")
+                {
+
+                    AImoves.Stop();
+                    MessageBox.Show("Você venceu!");
+                    playerWins++;
+                    label1.Text = "Jogador (X): " + playerWins;
+                    resetGame();
+                }
+                // verifica as possibilidades de vitória da IA
+                else if (button1.Text == "O" && button2.Text == "O" && button3.Text == "O"
+                || button4.Text == "O" && button5.Text == "O" && button6.Text == "O"
+                || button7.Text == "O" && button9.Text == "O" && button8.Text == "O"
+                || button1.Text == "O" && button4.Text == "O" && button7.Text == "O"
+                || button2.Text == "O" && button5.Text == "O" && button8.Text == "O"
+                || button3.Text == "O" && button6.Text == "O" && button9.Text == "O"
+                || button1.Text == "O" && button5.Text == "O" && button9.Text == "O"
+                || button3.Text == "O" && button5.Text == "O" && button7.Text == "O")
+                {
+
+                    AImoves.Stop();
+                    MessageBox.Show("Não foi dessa vez... O Computador ganhou.");
+                    computerWins++;
+                    label2.Text = "Computador (O): " + computerWins;
+                    resetGame();
+                }
+                // verifica empate
+                else if (buttons.Count == 0)
+                {
+                    AImoves.Stop();
+                    MessageBox.Show("Empatou.");
+                    resetGame();
+                }
+            }
+            //FIM THREAD RESULTADOS
         }
     }
 }
